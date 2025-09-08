@@ -7,12 +7,12 @@ const {
     eliminar_Unidad
 } = require('../controllers/Unidades');
 
-const routerNoticias = Router();
+const routerUnidades = Router();
 
-routerNoticias.post('/', registrar_Unidad);
-routerNoticias.get('/', obtener_Unidad);
-routerNoticias.get('/:id_Unidad', obtener_Unidad_One);
-routerNoticias.put('/:id_Unidad', modificar_Unidad);
-routerNoticias.delete('/:id_Unidad', eliminar_Unidad);
+routerUnidades.post('/', registrar_Unidad);
+routerUnidades.get('/', obtener_Unidad);
+routerUnidades.get('/:id_Unidad', obtener_Unidad_One);
+routerUnidades.put('/:id_Unidad', modificar_Unidad);
+routerUnidades.delete('/:id_Unidad', eliminar_Unidad);
 
-module.exports = (app) => app.use('/Unidades',routerNoticias);
+module.exports = (app) => app.use('/Unidades',routerUnidades);

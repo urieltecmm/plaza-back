@@ -1,15 +1,15 @@
 const db = require("../config/mysql");
 
 const registrar_Unidad = async (req, res) => {
-    const { nombre } = req.body;
+    const { nombre, responsable } = req.body;
     const con = await db.getConnection();
 
     try{
-        const [Unidades] = await con.query("SELECT id_unidad, nombre FROM Unidades where nombre = ?", [nombre]);
+        const [Unidades] = await con.query("SELECT id_unidad, nombre, responsable FROM Unidades where nombre = ? and status = 1", [nombre]);
         if (Unidades.find(Unidades => Unidades.nombre === nombre)) {
             return res.status(400).json({ok: false, msg: "La unidad ya existe"});
         }
-        await con.query("INSERT INTO Unidades (nombre) VALUES (?)", [nombre]);
+        await con.query("INSERT INTO Unidades (nombre, responsable) VALUES (?, ?)", [nombre,responsable]);
         return res.status(201).json({msg: "Unidad registrada correctamente"});
     }catch(err){
         console.log(err);
@@ -22,7 +22,7 @@ const registrar_Unidad = async (req, res) => {
 const obtener_Unidad = async (req, res) => {
     const con = await db.getConnection();
     try {
-        const [Unidades] = await con.query("SELECT id_unidad, nombre FROM Unidades");
+        const [Unidades] = await con.query("SELECT id_unidad, nombre, responsable FROM Unidades and status = 1");
 
         const final_Json = Unidades.map(unidad => ({
             id_unidad: unidad.id_unidad,
@@ -43,7 +43,7 @@ const obtener_Unidad_One = async (req, res) => {
     const { id_Unidad } = req.params;
     const con = await db.getConnection();
     try {
-        const [Unidades] = await con.query("select id_unidad, nombre FROM Unidades WHERE id_unidad = ?", [id_Unidad]);
+        const [Unidades] = await con.query("select id_unidad, nombre FROM Unidades WHERE id_unidad = ? and status = 1", [id_Unidad]);
         if (Unidades.length === 0) {
             return res.status(404).json({ ok: false, msg: "Unidad no encontrada" });
         }
@@ -66,18 +66,18 @@ const obtener_Unidad_One = async (req, res) => {
 
 const modificar_Unidad = async (req, res) => {
     const { id_Unidad } = req.params;
-    const { nombre } = req.body;
+    const { nombre, responsable } = req.body;
     const con = await db.getConnection();
 
     try {
-        const [Unidades] = await con.query("SELECT * FROM Unidades WHERE id_unidad = ?", [id_Unidad]);
+        const [Unidades] = await con.query("SELECT * FROM Unidades WHERE id_unidad = ? and status = 1", [id_Unidad]);
         if (Unidades.length === 0) {
             return res.status(404).json({ ok: false, msg: "Unidad no encontrada" });
         }
 
         await con.query(
-            "update Unidades set nombre = ? where id_unidad = ?",
-            [nombre, id_Unidad]
+            "update Unidades set nombre = ?, responsable = ? where id_unidad = ? and status = 1",
+            [nombre, responsable, id_Unidad]
         );
 
         const [updatedUnidadRows] = await con.query("SELECT * FROM Unidades WHERE id_unidad = ?", [id_Unidad]);
@@ -101,14 +101,14 @@ const eliminar_Unidad = async (req, res) => {
     const { id_Unidad } = req.params;
     const con = await db.getConnection();
     try {
-        const [Unidades] = await con.query("SELECT * FROM Unidades WHERE id_unidad = ?", [id_Unidad]);
+        const [Unidades] = await con.query("SELECT * FROM Unidades WHERE id_unidad = ? ", [id_Unidad]);
         if (Unidades.length === 0) {
             return res.status(404).json({ ok: false, msg: "Unidad no encontrada" });
         }
 
-        await con.query("UPDATE usuarios SET status = 'Inactivo' WHERE idUser = ?", [idUser]);
+        await con.query("UPDATE Unidades SET status = 0 WHERE id_Unidad = ?", [id_Unidad]);
 
-        return res.status(200).json({ ok: true, msg: "Usuario eliminado correctamente" });
+        return res.status(200).json({ ok: true, msg: "Unidad eliminada correctamente" });
     } catch (err) {
         console.log(err);
         res.status(500).json({ ok: false, msg: 'Algo salió mal' });
