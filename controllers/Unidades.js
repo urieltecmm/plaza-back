@@ -1,15 +1,15 @@
 const db = require("../config/mysql");
 
 const registrar_Unidad = async (req, res) => {
-    const { nombre, responsable } = req.body;
+    const { nombre } = req.body;
     const con = await db.getConnection();
 
     try{
-        const [Unidades] = await con.query("SELECT id_unidad, nombre, responsable FROM Unidades where nombre = ? and status = 1", [nombre]);
+        const [Unidades] = await con.query("SELECT id_unidad, nombre FROM Unidades where nombre = ? and status = 1", [nombre]);
         if (Unidades.find(Unidades => Unidades.nombre === nombre)) {
             return res.status(400).json({ok: false, msg: "La unidad ya existe"});
         }
-        await con.query("INSERT INTO Unidades (nombre, responsable) VALUES (?, ?)", [nombre,responsable]);
+        await con.query("INSERT INTO Unidades (nombre) VALUES (?)", [nombre]);
         return res.status(201).json({msg: "Unidad registrada correctamente"});
     }catch(err){
         console.log(err);
@@ -22,7 +22,7 @@ const registrar_Unidad = async (req, res) => {
 const obtener_Unidad = async (req, res) => {
     const con = await db.getConnection();
     try {
-        const [Unidades] = await con.query("SELECT id_unidad, nombre, responsable FROM Unidades and status = 1");
+        const [Unidades] = await con.query("SELECT id_unidad, nombre FROM Unidades and status = 1");
 
         const final_Json = Unidades.map(unidad => ({
             id_unidad: unidad.id_unidad,
@@ -66,7 +66,7 @@ const obtener_Unidad_One = async (req, res) => {
 
 const modificar_Unidad = async (req, res) => {
     const { id_Unidad } = req.params;
-    const { nombre, responsable } = req.body;
+    const { nombre } = req.body;
     const con = await db.getConnection();
 
     try {
@@ -76,8 +76,8 @@ const modificar_Unidad = async (req, res) => {
         }
 
         await con.query(
-            "update Unidades set nombre = ?, responsable = ? where id_unidad = ? and status = 1",
-            [nombre, responsable, id_Unidad]
+            "update Unidades set nombre = ? where id_unidad = ? and status = 1",
+            [nombre, id_Unidad]
         );
 
         const [updatedUnidadRows] = await con.query("SELECT * FROM Unidades WHERE id_unidad = ?", [id_Unidad]);
@@ -121,6 +121,4 @@ module.exports = {
     registrar_Unidad,
     obtener_Unidad,
     obtener_Unidad_One,
-    modificar_Unidad,
-    eliminar_Unidad
 }

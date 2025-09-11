@@ -1,15 +1,15 @@
 const db = require("../config/mysql");
 
 const registrar_Area = async (req, res) => {
-    const { nombre, responsable } = req.body;
+    const { nombre } = req.body;
     const con = await db.getConnection();
 
     try{
-        const [Areas] = await con.query("SELECT id_Area, nombre, responsable FROM Areas where nombre = ? and status = 1", [nombre]);
+        const [Areas] = await con.query("SELECT id_Area, nombre FROM Areas where nombre = ? and status = 1", [nombre]);
         if (Areas.find(Areas => Areas.nombre === nombre)) {
             return res.status(400).json({ok: false, msg: "La area ya existe"});
         }
-        await con.query("INSERT INTO Areas (nombre, responsable) VALUES (?, ?)", [nombre, responsable]);
+        await con.query("INSERT INTO Areas (nombre) VALUES (?)", [nombre]);
         return res.status(201).json({msg: "Area registrada correctamente"});
     }catch(err){
         console.log(err);
@@ -22,7 +22,7 @@ const registrar_Area = async (req, res) => {
 const obtener_Area = async (req, res) => {
     const con = await db.getConnection();
     try {
-        const [Areas] = await con.query("SELECT id_Area, nombre, responsable FROM Areas where status = 1");
+        const [Areas] = await con.query("SELECT id_Area, nombre FROM Areas where status = 1");
 
         const final_Json = Areas.map(Area => ({
             id_Area: Area.id_Area,
@@ -43,7 +43,7 @@ const obtener_Area_One = async (req, res) => {
     const { id_Area } = req.params;
     const con = await db.getConnection();
     try {
-        const [Areas] = await con.query("select id_Area, nombre, responsable FROM Areas WHERE id_Area = ? and status = 1", [id_Area]);
+        const [Areas] = await con.query("select id_Area, nombre FROM Areas WHERE id_Area = ? and status = 1", [id_Area]);
         if (Areas.length === 0) {
             return res.status(404).json({ ok: false, msg: "Area no encontrada" });
         }
@@ -66,7 +66,7 @@ const obtener_Area_One = async (req, res) => {
 
 const modificar_Area = async (req, res) => {
     const { id_Area } = req.params;
-    const { nombre, responsable } = req.body;
+    const { nombre } = req.body;
     const con = await db.getConnection();
 
     try {
@@ -76,8 +76,8 @@ const modificar_Area = async (req, res) => {
         }
 
         await con.query(
-            "update Areas set nombre = ? , responsable = ? where id_Area = ?",
-            [nombre, responsable, id_Area]
+            "update Areas set nombre = ? where id_Area = ?",
+            [nombre, id_Area]
         );
 
         const [updatedAreaRows] = await con.query("SELECT * FROM Areas WHERE id_Area = ? and status = 1", [id_Area]);
@@ -121,6 +121,4 @@ module.exports = {
     registrar_Area,
     obtener_Area,
     obtener_Area_One,
-    modificar_Area,
-    eliminar_Area
 }
