@@ -1,8 +1,9 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const https = require("https");
-const routerUnidad = require("./router/Unidades");
-const routerPersonal = require("./router/Personal");
+
+const personalRoutes = require("./router/Personal");
+const unidadesRoutes = require("./router/Unidades");
 
 dotenv.config();
 
@@ -17,22 +18,13 @@ app.use((req, res, next) => {
   next();
 });
 
-routerUnidad(app);
-
-app.use('/unidades', routerUnidad);
-app.use('/personal', routerPersonal);
-
-
-/*const privateKey  = fs.readFileSync( '/etc/letsencrypt/live/xura.tsj.mx/privkey.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/xura.tsj.mx/fullchain.pem', 'utf8');
-const certificate = fs.readFileSync( '/etc/letsencrypt/live/xura.tsj.mx/cert.pem', 'utf8');*/
-
-//const credentials = { key: privateKey, ca: ca, cert: certificate };
-//const https_server = https.createServer( credentials, http_server );
+unidadesRoutes(app);
+personalRoutes(app);
 
 if (require.main === module) {
-  app.listen(process.env.PORT, () => {
-    console.log('servidor corriendo en el puerto:', process.env.PORT);
+  const PORT = process.env.PORT || 3025;
+  app.listen(PORT, () => {
+    console.log('servidor corriendo en el puerto:', PORT);
   });
 }
 

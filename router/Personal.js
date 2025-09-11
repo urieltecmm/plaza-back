@@ -5,10 +5,10 @@ const {
     obtener_Personal_One,
 } = require('../controllers/Personal');
 
-const routerPersonals = Router();
+const routerPersonal = Router();
 
-routerPersonals.post('/', registrar_Personal);
-routerPersonals.get('/', obtener_Personal);
-routerPersonals.get('/:id_Personal', obtener_Personal_One);
+routerPersonal.post('/', registrar_Personal);
+routerPersonal.get('/', obtener_Personal);
+routerPersonal.get('/:id_Personal', obtener_Personal_One);
 
-module.exports = (app) => app.use('/Personal',routerPersonals);
+module.exports = (app) => app.use('/personal', routerPersonal);

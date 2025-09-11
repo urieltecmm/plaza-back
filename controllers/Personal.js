@@ -22,18 +22,24 @@ const registrar_Personal = async (req, res) => {
 const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
-        id, nombre, puesto, unidad, area, plaza, code, nivel
-        const [Personals] = await con.query(```
+        const [Personals] = await con.query(`
             select pe.id_personal, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pe.nivel
             from Personal as pe
             join Plazas as pl on pe.id_Plaza = pl.id_Plaza
             join Areas as a on pe.id_Area = a.id_Area
             left join Unidades as u on pl.id_Unidad = u.id_Unidad
-			ORDER by pe.codigo;```);
+			ORDER by pe.codigo ;
+        `);
 
         const final_Json = Personals.map(Personal => ({
             id_Personal: Personal.id_Personal,
-            nombre: Personal.nombre
+            nombre: Personal.nombre,
+            puesto: Personal.puesto,
+            unidad: Personal.unidad,
+            area: Personal.area,
+            plaza: Personal.plaza,
+            codigo: Personal.codigo,
+            nivel: Personal.nivel
         }));
 
         return res.status(200).json(final_Json);
