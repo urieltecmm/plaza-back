@@ -19,7 +19,7 @@ const iniciar_sesion = async (req, res) => {
 
             const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '6h' });
 
-            return res.status(200).json({ok: true, msg: "Inicio de sesión exitoso", token: token});
+            return res.status(200).json({ok: true, msg: "Inicio de sesión exitoso", token: token, nombre: validacion.nombre});
         }else{
             return res.status(404).json({ok: false, msg: "Inicio de sesión no valido"});
         }
