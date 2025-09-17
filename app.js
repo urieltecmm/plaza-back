@@ -5,6 +5,7 @@ const https = require("https");
 const personalRoutes = require("./router/Personal");
 const unidadesRoutes = require("./router/Unidades");
 const historicoRoutes = require("./router/Historicos");
+const UsuarioRoutes = require("./router/Usuario");
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 
 unidadesRoutes(app);
 personalRoutes(app);
+UsuarioRoutes(app);
 historicoRoutes(app);
 
 if (require.main === module) {
