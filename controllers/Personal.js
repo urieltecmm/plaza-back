@@ -23,7 +23,7 @@ const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
         const [Personals] = await con.query(`
-            select pe.id_personal, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pe.nivel
+            select pe.id_personal, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pe.nivel, pe.id_Plaza
             from Personal as pe
             join Plazas as pl on pe.id_Plaza = pl.id_Plaza
             join Areas as a on pe.id_Area = a.id_Area
@@ -33,6 +33,7 @@ const obtener_Personal = async (req, res) => {
 
         const final_Json = Personals.map(Personal => ({
             id_Personal: Personal.id_Personal,
+            id_Plaza: Personal.id_Plaza,
             nombre: Personal.nombre,
             puesto: Personal.puesto,
             unidad: Personal.unidad,

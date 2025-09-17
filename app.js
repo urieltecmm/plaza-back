@@ -4,6 +4,7 @@ const https = require("https");
 
 const personalRoutes = require("./router/Personal");
 const unidadesRoutes = require("./router/Unidades");
+const vacantesRoutes = require("./router/Vacantes");
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 
 unidadesRoutes(app);
 personalRoutes(app);
+vacantesRoutes(app);
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3025;
