@@ -87,29 +87,39 @@ const obtener_Personal_One = async (req, res) => {
 
 const modificar_Personal = async (req, res) => {
     const { id_Personal } = req.params;
-    const { nombre } = req.body;
+    const { codigo, nombre, sindicalizado, id_Plaza, id_Area, autorizo, status, salida } = req.body;
     const con = await db.getConnection();
 
     try {
-        const [Personals] = await con.query("SELECT * FROM Personals WHERE id_Personal = ? and status = 1", [id_Personal]);
-        if (Personals.length === 0) {
-            return res.status(404).json({ ok: false, msg: "Personal no encontrada" });
-        }
+        const [validacion_historial1] = await con.query("SELECT id_Historial as res FROM Historial ORDER BY id_Historial DESC LIMIT 1");
+
+        const validacion1 = validacion_historial1[0].res;
 
         await con.query(
-            "update Personals set nombre = ? where id_Personal = ?",
-            [nombre, id_Personal]
+            "UPDATE Personal SET codigo = ?, nombre = ?, sindicalizado = ?, id_Plaza = ?, id_Area = ?, status = ? WHERE id_Personal = ?",
+            [codigo, nombre, sindicalizado, id_Plaza, id_Area, status, id_Personal]
         );
 
-        const [updatedPersonalRows] = await con.query("SELECT * FROM Personals WHERE id_Personal = ? and status = 1", [id_Personal]);
-        const Personal = updatedPersonalRows[0];
+        const [validacion_historial2] = await con.query("SELECT id_Historial as res FROM Historial ORDER BY id_Historial DESC LIMIT 1");
 
-        const result = {
-            id_Personal: Personal.id_Personal,
-            nombre: Personal.nombre
-        };
+        const validacion2 = validacion_historial2[0].res;
 
-        return res.status(200).json(result);
+        if(validacion1 !== validacion2){
+            console.log("se crea historial");
+            if(status === false){
+                await con.query(
+                    "UPDATE Historial SET autorizo = ?, salida = ? WHERE id_Historial = ?",
+                    [autorizo, salida, validacion2]
+                );
+                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, id_Area, autorizo, status, salida});
+            }else{
+                await con.query(
+                    "UPDATE Historial SET autorizo = ? WHERE id_Historial = ?",
+                    [autorizo, validacion2]
+                );
+                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, id_Area, autorizo, status});
+            }
+        }
     } catch (err) {
         console.log(err);
         res.status(500).json({ ok: false, msg: 'Algo salió mal' });
@@ -142,5 +152,6 @@ module.exports = {
     registrar_Personal,
     obtener_Personal,
     obtener_Personal_One,
-    eliminar_Personal
+    eliminar_Personal,
+    modificar_Personal
 }
