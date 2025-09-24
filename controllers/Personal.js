@@ -23,7 +23,7 @@ const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
         const [Personals] = await con.query(`
-            select pe.id_Personal, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
+            select pl.id_Plaza, pe.status, pe.id_Personal, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
             (
                 SELECT COUNT(*) 
                 FROM Historial h
@@ -33,11 +33,13 @@ const obtener_Personal = async (req, res) => {
             join Plazas as pl on pe.id_Plaza = pl.id_Plaza
             join Areas as a on pe.id_Area = a.id_Area
             left join Unidades as u on pl.id_Unidad = u.id_Unidad
+            where pe.status = 1
 			ORDER by pe.codigo ;
         `);
 
         const final_Json = Personals.map(Personal => ({
             id_Personal: Personal.id_Personal,
+            id_Plaza: Personal.id_Plaza,
             nombre: Personal.nombre,
             puesto: Personal.puesto,
             unidad: Personal.unidad,
@@ -47,7 +49,8 @@ const obtener_Personal = async (req, res) => {
             nivel: Personal.nivel,
             tabulador: Personal.tabulador,
             sindicalizado: Personal.sindicalizado,
-            total_historial: Personal.total_historial
+            total_historial: Personal.total_historial,
+            status: Personal.status
         }));
 
         return res.status(200).json(final_Json);

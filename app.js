@@ -4,6 +4,7 @@ const https = require("https");
 
 const personalRoutes = require("./router/Personal");
 const unidadesRoutes = require("./router/Unidades");
+const vacantesRoutes = require("./router/Vacantes");
 const historicoRoutes = require("./router/Historicos");
 const UsuarioRoutes = require("./router/Usuario");
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 
 unidadesRoutes(app);
 personalRoutes(app);
+vacantesRoutes(app);
 UsuarioRoutes(app);
 historicoRoutes(app);
 
