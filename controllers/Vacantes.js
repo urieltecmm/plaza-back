@@ -1,12 +1,11 @@
 const db = require("../config/mysql");
 
-// Obtener todas las vacantes (status = 1)
 const getAllVacantes = async (req, res) => {
     const con = await db.getConnection();
     try {
         const [vacantes] = await con.query(`
             SELECT 
-                pl.id_Plaza AS idVacante,
+                pl.id_Plaza AS id_Plaza,
                 pl.nombre AS nombre,
                 pl.puesto,
                 pl.tabulador,
@@ -27,14 +26,13 @@ const getAllVacantes = async (req, res) => {
     }
 };
 
-// Obtener una sola vacante por id_Plaza
 const getVacanteById = async (req, res) => {
     const { idVacante } = req.params;
     const con = await db.getConnection();
     try {
         const [rows] = await con.query(`
             SELECT 
-                pl.id_Plaza AS idVacante,
+                pl.id_Plaza AS id_Plaza,
                 pl.nombre AS nombre,
                 pl.puesto,
                 pl.tabulador,
