@@ -3,6 +3,6 @@ const { modificarPlazas } = require("../controllers/Plazas");
 
 const routerPlazas = Router();
 
-routerPlazas.put('/', modificarPlazas)
+routerPlazas.patch('/', modificarPlazas)
 
-module.exports = (app) => app.use('/Plazas',routerPlazas);
+module.exports = (app) => app.use('/plazas',routerPlazas);

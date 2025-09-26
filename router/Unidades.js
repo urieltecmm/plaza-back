@@ -9,4 +9,4 @@ const routerUnidades = Router();
 routerUnidades.get('/', obtener_Unidad);
 routerUnidades.get('/:id_Unidad', obtener_Unidad_One);
 
-module.exports = (app) => app.use('/Unidades',routerUnidades);
+module.exports = (app) => app.use('/unidades',routerUnidades);
