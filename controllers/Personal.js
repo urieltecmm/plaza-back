@@ -23,7 +23,7 @@ const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
         const [Personals] = await con.query(`
-            select pl.id_Plaza, pe.status, pe.id_Personal, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
+            select pl.id_Plaza, pe.status, pe.id_Personal, pe.id_Area, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
             (
                 SELECT COUNT(*) 
                 FROM Historial h
@@ -40,6 +40,7 @@ const obtener_Personal = async (req, res) => {
         const final_Json = Personals.map(Personal => ({
             id_Personal: Personal.id_Personal,
             id_Plaza: Personal.id_Plaza,
+            id_Area: Personal.id_Area,
             nombre: Personal.nombre,
             puesto: Personal.puesto,
             unidad: Personal.unidad,
