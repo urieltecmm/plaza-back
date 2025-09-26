@@ -7,6 +7,7 @@ const unidadesRoutes = require("./router/Unidades");
 const vacantesRoutes = require("./router/Vacantes");
 const historicoRoutes = require("./router/Historicos");
 const UsuarioRoutes = require("./router/Usuario");
+const routerPlazas = require("./router/Plazas");
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ personalRoutes(app);
 vacantesRoutes(app);
 UsuarioRoutes(app);
 historicoRoutes(app);
+routerPlazas(app);
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3025;

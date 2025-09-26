@@ -62,6 +62,96 @@ const obtener_Personal = async (req, res) => {
     }
 };
 
+const obtener_Personal_solo = async (req, res) => {
+    const con = await db.getConnection();
+    try {
+        const [Personals] = await con.query(`
+            select 
+            pe.id_Personal,
+            pe.codigo,
+            pe.nombre,
+            pe.fecha_entrada,
+            pe.sindicalizado,
+            pl.nombre as plaza,
+            a.nombre as area
+            from Personal as pe
+            join Plazas as pl on pe.id_Plaza = pl.id_Plaza
+            join Areas as a on pe.id_Area = a.id_Area
+            left join Unidades as u on pl.id_Unidad = u.id_Unidad
+            where pe.status = 1
+			ORDER by pe.codigo;
+        `);
+
+        const final_Json = Personals.map(Personal => ({
+            id_Personal: Personal.id_Personal,
+            id_Plaza: Personal.id_Plaza,
+            nombre: Personal.nombre,
+            puesto: Personal.puesto,
+            unidad: Personal.unidad,
+            area: Personal.area,
+            plaza: Personal.plaza,
+            codigo: Personal.codigo,
+            nivel: Personal.nivel,
+            tabulador: Personal.tabulador,
+            sindicalizado: Personal.sindicalizado,
+            total_historial: Personal.total_historial,
+            status: Personal.status
+        }));
+
+        return res.status(200).json(final_Json);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ ok: false, msg: 'Algo salió mal' });
+    } finally {
+        con.release();
+    }
+};
+
+const obtener_Personal_solo_one = async (req, res) => {
+    const con = await db.getConnection();
+    const {id_Personal} = req.params;
+    try {
+        const [Personals] = await con.query(`
+            select 
+            pe.id_Personal,
+            pe.codigo,
+            pe.nombre,
+            pe.fecha_entrada,
+            pe.sindicalizado,
+            pl.nombre as plaza,
+            a.nombre as area
+            from Personal as pe
+            join Plazas as pl on pe.id_Plaza = pl.id_Plaza
+            join Areas as a on pe.id_Area = a.id_Area
+            left join Unidades as u on pl.id_Unidad = u.id_Unidad
+            where pe.status = 1 AND pe.id_Personal = ?
+			ORDER by pe.codigo;
+        `, [id_Personal]);
+
+        const final_Json = Personals.map(Personal => ({
+            id_Personal: Personal.id_Personal,
+            id_Plaza: Personal.id_Plaza,
+            nombre: Personal.nombre,
+            puesto: Personal.puesto,
+            unidad: Personal.unidad,
+            area: Personal.area,
+            plaza: Personal.plaza,
+            codigo: Personal.codigo,
+            nivel: Personal.nivel,
+            tabulador: Personal.tabulador,
+            sindicalizado: Personal.sindicalizado,
+            total_historial: Personal.total_historial,
+            status: Personal.status
+        }));
+
+        return res.status(200).json(final_Json);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ ok: false, msg: 'Algo salió mal' });
+    } finally {
+        con.release();
+    }
+};
 
 const obtener_Personal_One = async (req, res) => {
     const { id_Personal } = req.params;
@@ -156,5 +246,7 @@ module.exports = {
     obtener_Personal,
     obtener_Personal_One,
     eliminar_Personal,
-    modificar_Personal
+    modificar_Personal,
+    obtener_Personal_solo,
+    obtener_Personal_solo_one
 }
