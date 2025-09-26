@@ -11,4 +11,4 @@ routerAreas.post('/', registrar_Area);
 routerAreas.get('/', obtener_Area);
 routerAreas.get('/:id_Area', obtener_Area_One);
 
-module.exports = (app) => app.use('/Area',routerAreas);
+module.exports = (app) => app.use('/area',routerAreas);

@@ -6,4 +6,4 @@ const UsuarioRoutes = Router();
 
 UsuarioRoutes.post("/sesion", iniciar_sesion);
 
-module.exports = (app) => app.use('/Usuario', UsuarioRoutes);
+module.exports = (app) => app.use('/usuario', UsuarioRoutes);
