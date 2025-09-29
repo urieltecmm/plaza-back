@@ -121,4 +121,6 @@ module.exports = {
     registrar_Area,
     obtener_Area,
     obtener_Area_One,
+    modificar_Area,
+    eliminar_Area,
 }

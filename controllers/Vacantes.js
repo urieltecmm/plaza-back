@@ -135,10 +135,32 @@ const desasignarVacante = async (req, res) => {
     }
 }
 
+const getAllPlazas = async (req, res) => {
+  const con = await db.getConnection();
+  try {
+    const [plazas] = await con.query(`
+      SELECT 
+        pl.id_Plaza AS id_Plaza, pl.puesto,
+        pl.nombre AS nombre
+      FROM Plazas pl
+      WHERE pl.status = 1
+      ORDER BY pl.id_Plaza;
+    `);
+
+    return res.status(200).json(plazas);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, msg: "Algo salió mal" });
+  } finally {
+    con.release();
+  }
+};
+
 module.exports = {
     getAllVacantes,
     getVacanteById,
     modificarVacantes,
     asignarVacante,
-    desasignarVacante
+    desasignarVacante,
+    getAllPlazas,
 };
