@@ -7,7 +7,6 @@ const unidadesRoutes = require("./router/Unidades");
 const vacantesRoutes = require("./router/Vacantes");
 const historicoRoutes = require("./router/Historicos");
 const UsuarioRoutes = require("./router/Usuario");
-const areaRoutes = require("./router/Areas");
 const routerPlazas = require("./router/Plazas");
 
 dotenv.config();
@@ -28,7 +27,6 @@ personalRoutes(app);
 vacantesRoutes(app);
 UsuarioRoutes(app);
 historicoRoutes(app);
-areaRoutes(app);
 routerPlazas(app);
 
 if (require.main === module) {

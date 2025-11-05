@@ -23,7 +23,7 @@ const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
         const [Personals] = await con.query(`
-            select pl.id_Plaza, pe.status, pe.id_Personal, pe.id_Area, pe.nombre, pl.puesto, u.nombre as unidad, a.nombre as area, pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
+            select pl.id_Plaza, pe.status, pe.id_Personal, pe.nombre, pl.puesto, u.nombre as unidad, u.zona ,pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
             (
                 SELECT COUNT(*) 
                 FROM Historial h
@@ -31,7 +31,6 @@ const obtener_Personal = async (req, res) => {
             ) AS total_historial
             from Personal as pe
             join Plazas as pl on pe.id_Plaza = pl.id_Plaza
-            join Areas as a on pe.id_Area = a.id_Area
             left join Unidades as u on pl.id_Unidad = u.id_Unidad
             where pe.status = 1
 			ORDER by pe.codigo ;
@@ -40,11 +39,10 @@ const obtener_Personal = async (req, res) => {
         const final_Json = Personals.map(Personal => ({
             id_Personal: Personal.id_Personal,
             id_Plaza: Personal.id_Plaza,
-            id_Area: Personal.id_Area,
             nombre: Personal.nombre,
             puesto: Personal.puesto,
             unidad: Personal.unidad,
-            area: Personal.area,
+            zona: Personal.zona,
             plaza: Personal.plaza,
             codigo: Personal.codigo,
             nivel: Personal.nivel,
@@ -74,10 +72,9 @@ const obtener_Personal_solo = async (req, res) => {
             pe.fecha_entrada,
             pe.sindicalizado,
             pl.nombre as plaza,
-            a.nombre as area
+            u.zona,
             from Personal as pe
             join Plazas as pl on pe.id_Plaza = pl.id_Plaza
-            join Areas as a on pe.id_Area = a.id_Area
             left join Unidades as u on pl.id_Unidad = u.id_Unidad
             where pe.status = 1
 			ORDER by pe.codigo;
@@ -88,8 +85,8 @@ const obtener_Personal_solo = async (req, res) => {
             id_Plaza: Personal.id_Plaza,
             nombre: Personal.nombre,
             puesto: Personal.puesto,
+            zona: Personal.zona,
             unidad: Personal.unidad,
-            area: Personal.area,
             plaza: Personal.plaza,
             codigo: Personal.codigo,
             nivel: Personal.nivel,
@@ -120,10 +117,9 @@ const obtener_Personal_solo_one = async (req, res) => {
             pe.fecha_entrada,
             pe.sindicalizado,
             pl.nombre as plaza,
-            a.nombre as area
+            u.zona,
             from Personal as pe
             join Plazas as pl on pe.id_Plaza = pl.id_Plaza
-            join Areas as a on pe.id_Area = a.id_Area
             left join Unidades as u on pl.id_Unidad = u.id_Unidad
             where pe.status = 1 AND pe.id_Personal = ?
 			ORDER by pe.codigo;
@@ -134,8 +130,8 @@ const obtener_Personal_solo_one = async (req, res) => {
             id_Plaza: Personal.id_Plaza,
             nombre: Personal.nombre,
             puesto: Personal.puesto,
+            zona: Personal.zona,
             unidad: Personal.unidad,
-            area: Personal.area,
             plaza: Personal.plaza,
             codigo: Personal.codigo,
             nivel: Personal.nivel,
@@ -181,7 +177,7 @@ const obtener_Personal_One = async (req, res) => {
 
 const modificar_Personal = async (req, res) => {
     const { id_Personal } = req.params;
-    const { codigo, nombre, sindicalizado, id_Plaza, id_Area, autorizo, status, salida } = req.body;
+    const { codigo, nombre, sindicalizado, id_Plaza, autorizo, status, salida } = req.body;
     const con = await db.getConnection();
 
     try {
@@ -190,8 +186,8 @@ const modificar_Personal = async (req, res) => {
         const validacion1 = validacion_historial1[0].res;
 
         await con.query(
-            "UPDATE Personal SET codigo = ?, nombre = ?, sindicalizado = ?, id_Plaza = ?, id_Area = ?, status = ? WHERE id_Personal = ?",
-            [codigo, nombre, sindicalizado, id_Plaza, id_Area, status, id_Personal]
+            "UPDATE Personal SET codigo = ?, nombre = ?, sindicalizado = ?, id_Plaza = ?, status = ? WHERE id_Personal = ?",
+            [codigo, nombre, sindicalizado, id_Plaza, status, id_Personal]
         );
 
         const [validacion_historial2] = await con.query("SELECT id_Historial as res FROM Historial ORDER BY id_Historial DESC LIMIT 1");
@@ -204,16 +200,16 @@ const modificar_Personal = async (req, res) => {
                     "UPDATE Historial SET autorizo = ?, salida = ? WHERE id_Historial = ?",
                     [autorizo, salida, validacion2]
                 );
-                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, id_Area, autorizo, status, salida});
-            } else {
+                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, autorizo, status, salida});
+            }else{
                 await con.query(
                     "UPDATE Historial SET autorizo = ? WHERE id_Historial = ?",
                     [autorizo, validacion2]
                 );
-                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, id_Area, autorizo, status});
+                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, autorizo, status});
             }
         } else {
-            return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, id_Area, status});
+            return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, status});
         }
     } catch (err) {
         console.log(err);
