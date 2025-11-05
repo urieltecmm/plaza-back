@@ -7,14 +7,15 @@ const {
     asignarVacante,
     desasignarVacante,
 } = require('../controllers/Vacantes');
+const verificarToken = require("../middlewares/token");
 
 const routerVacante = Router();
 
-routerVacante.get('/', getAllVacantes);
-routerVacante.get('/plazas', getAllPlazas);
-routerVacante.get('/:idVacante', getVacanteById);
-routerVacante.patch('/', modificarVacantes)
-routerVacante.post('/asignar', asignarVacante);
-routerVacante.delete('/desasignar/:id_Personal', desasignarVacante);
+routerVacante.get('/', verificarToken, getAllVacantes);
+routerVacante.get('/plazas', verificarToken, getAllPlazas);
+routerVacante.get('/:idVacante', verificarToken, getVacanteById);
+routerVacante.patch('/', verificarToken, modificarVacantes)
+routerVacante.post('/asignar', verificarToken, asignarVacante);
+routerVacante.delete('/desasignar/:id_Personal', verificarToken, desasignarVacante);
 
 module.exports = (app) => app.use('/vacantes', routerVacante);

@@ -19,6 +19,31 @@ const registrar_Personal = async (req, res) => {
     }
 }
 
+const registrar_Personal2 = async (req, res) => {
+    const { nombre, fecha_entrada, sindicalizado, id_Area } = req.body;
+    const con = await db.getConnection();
+
+    try{
+        /*console.log(codigo, nombre, fecha_entrada, sindicalizado, id_Area);
+        const [codigo_validacion] = await con.query("SELECT id_Personal, codigo FROM Personal where codigo = ? and status = 1", [codigo]);
+        if (codigo_validacion.find(Codigo => Codigo.codigo === codigo)) {
+            return res.status(400).json({ok: false, msg: "El código ya existe"});
+        }*/
+
+        const [Personals] = await con.query("SELECT id_Personal, nombre FROM Personal where nombre = ? and status = 1", [nombre]);
+        if (Personals.find(Personals => Personals.nombre === nombre)) {
+            return res.status(400).json({ok: false, msg: "La Personal ya existe"});
+        }
+        await con.query("INSERT INTO Personal(nombre, fecha_entrada, sindicalizado, id_Area, status) VALUES (?, ?, ?, ?, 1)", [nombre, fecha_entrada, sindicalizado, id_Area]);
+        return res.status(201).json({ok: true, msg: "Personal registrada correctamente"});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({ok: false, msg: 'Algo salió mal'});
+    }finally{
+        con.release();
+    }
+}
+
 const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
@@ -94,6 +119,35 @@ const obtener_Personal_solo = async (req, res) => {
             sindicalizado: Personal.sindicalizado,
             total_historial: Personal.total_historial,
             status: Personal.status
+        }));
+
+        return res.status(200).json(final_Json);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ ok: false, msg: 'Algo salió mal' });
+    } finally {
+        con.release();
+    }
+};
+
+const obtener_Personal_vacante = async (req, res) => {
+    const con = await db.getConnection();
+
+    try {
+        const [Personals] = await con.query(`
+            select 
+            pe.id_Personal,
+            pe.nombre,
+            pe.codigo
+            from Personal as pe
+            where pe.id_Plaza IS null
+			ORDER by pe.codigo;
+        `);
+
+        const final_Json = Personals.map(Personal => ({
+            id_Personal: Personal.id_Personal,
+            nombre: Personal.nombre,
+            codigo: Personal.codigo,
         }));
 
         return res.status(200).json(final_Json);
@@ -196,6 +250,10 @@ const modificar_Personal = async (req, res) => {
 
         if(validacion1 !== validacion2){
             if(status === false){
+                //desasignar plaza
+                await con.query("UPDATE Personal SET id_Plaza = NULL WHERE id_Personal = ?", [id_Personal]);
+                await con.query("UPDATE Plazas SET status = 1 WHERE id_Plaza = ?", [id_Plaza]);
+
                 await con.query(
                     "UPDATE Historial SET autorizo = ?, salida = ? WHERE id_Historial = ?",
                     [autorizo, salida, validacion2]
@@ -246,5 +304,7 @@ module.exports = {
     eliminar_Personal,
     modificar_Personal,
     obtener_Personal_solo,
-    obtener_Personal_solo_one
+    obtener_Personal_solo_one,
+    obtener_Personal_vacante,
+    registrar_Personal2
 }

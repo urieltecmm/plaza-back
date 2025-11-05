@@ -83,7 +83,7 @@ const modificarVacantes = async (req, res) => {
 
 const asignarVacante = async (req, res) => {
     const con = await db.getConnection();
-    const {id_Personal, id_Plaza} = req.body;
+    const {id_Personal, id_Plaza, codigo} = req.body;
 
     try {
         console.log(id_Personal, id_Plaza);
@@ -103,7 +103,7 @@ const asignarVacante = async (req, res) => {
 
         //asignar plaza
 
-        await con.query("UPDATE Personal SET id_Plaza = ? WHERE id_Personal = ?", [id_Plaza, id_Personal]);
+        await con.query("UPDATE Personal SET id_Plaza = ?, codigo = ? WHERE id_Personal = ?", [id_Plaza, codigo, id_Personal]);
         await con.query("UPDATE Plazas SET status = 0 WHERE id_Plaza = ?", [id_Plaza]);
 
         return res.status(200).json({ok: true, msg: "plaza asignada exitosamente"});
