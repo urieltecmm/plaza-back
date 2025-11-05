@@ -4,11 +4,12 @@ const {
     obtener_Area,
     obtener_Area_One,
 } = require('../controllers/Areas');
+const verificarToken = require("../middlewares/token");
 
 const routerAreas = Router();
 
-routerAreas.post('/', registrar_Area);
-routerAreas.get('/', obtener_Area);
-routerAreas.get('/:id_Area', obtener_Area_One);
+routerAreas.post('/', verificarToken, registrar_Area);
+routerAreas.get('/', verificarToken, obtener_Area);
+routerAreas.get('/:id_Area', verificarToken, obtener_Area_One);
 
 module.exports = (app) => app.use('/area',routerAreas);
