@@ -20,11 +20,11 @@ const registrar_Personal = async (req, res) => {
 }
 
 const registrar_Personal2 = async (req, res) => {
-    const { nombre, fecha_entrada, sindicalizado, id_Area } = req.body;
+    const { nombre, fecha_entrada, sindicalizado } = req.body;
     const con = await db.getConnection();
 
     try{
-        /*console.log(codigo, nombre, fecha_entrada, sindicalizado, id_Area);
+        /*console.log(codigo, nombre, fecha_entrada, sindicalizado,);
         const [codigo_validacion] = await con.query("SELECT id_Personal, codigo FROM Personal where codigo = ? and status = 1", [codigo]);
         if (codigo_validacion.find(Codigo => Codigo.codigo === codigo)) {
             return res.status(400).json({ok: false, msg: "El código ya existe"});
@@ -34,7 +34,7 @@ const registrar_Personal2 = async (req, res) => {
         if (Personals.find(Personals => Personals.nombre === nombre)) {
             return res.status(400).json({ok: false, msg: "La Personal ya existe"});
         }
-        await con.query("INSERT INTO Personal(nombre, fecha_entrada, sindicalizado, id_Area, status) VALUES (?, ?, ?, ?, 1)", [nombre, fecha_entrada, sindicalizado, id_Area]);
+        await con.query("INSERT INTO Personal(nombre, fecha_entrada, sindicalizado, status) VALUES (?, ?, ?, ?, 1)", [nombre, fecha_entrada, sindicalizado]);
         return res.status(201).json({ok: true, msg: "Personal registrada correctamente"});
     }catch(err){
         console.log(err);
