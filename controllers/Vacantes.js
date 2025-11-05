@@ -10,6 +10,7 @@ const getAllVacantes = async (req, res) => {
                 pl.puesto,
                 pl.tabulador,
                 u.nombre AS unidad,
+                u.zona,
                 pl.status
             FROM Plazas pl
             LEFT JOIN Unidades u ON pl.id_Unidad = u.id_Unidad
@@ -37,6 +38,7 @@ const getVacanteById = async (req, res) => {
                 pl.puesto,
                 pl.tabulador,
                 u.nombre AS unidad,
+                u.zona,
                 pl.status
             FROM Plazas pl
             LEFT JOIN Unidades u ON pl.id_Unidad = u.id_Unidad
