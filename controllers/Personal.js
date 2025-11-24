@@ -34,7 +34,7 @@ const registrar_Personal2 = async (req, res) => {
         if (Personals.find(Personals => Personals.nombre === nombre)) {
             return res.status(400).json({ok: false, msg: "La Personal ya existe"});
         }
-        await con.query("INSERT INTO Personal(nombre, fecha_entrada, sindicalizado, status) VALUES (?, ?, ?, ?, 1)", [nombre, fecha_entrada, sindicalizado]);
+        await con.query("INSERT INTO Personal(nombre, fecha_entrada, sindicalizado, status) VALUES (?, ?, ?, 1)", [nombre, fecha_entrada, sindicalizado]);
         return res.status(201).json({ok: true, msg: "Personal registrada correctamente"});
     }catch(err){
         console.log(err);
