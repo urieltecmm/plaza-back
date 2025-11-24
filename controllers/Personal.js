@@ -141,6 +141,7 @@ const obtener_Personal_vacante = async (req, res) => {
             pe.codigo
             from Personal as pe
             where pe.id_Plaza IS null
+            AND status = 1
 			ORDER by pe.codigo;
         `);
 
