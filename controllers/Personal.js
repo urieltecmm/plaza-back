@@ -48,7 +48,7 @@ const obtener_Personal = async (req, res) => {
     const con = await db.getConnection();
     try {
         const [Personals] = await con.query(`
-            select pl.id_Plaza, pe.status, pe.id_Personal, pe.nombre, pl.puesto, u.nombre as unidad, u.zona ,pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador,
+            select pl.id_Plaza, pe.status, pe.id_Personal, pe.nombre, pl.puesto, u.nombre as unidad, u.zona ,pl.nombre as plaza, pe.codigo, pl.nivel, pe.sindicalizado, pl.tabulador, pl.conversion,
             (
                 SELECT COUNT(*) 
                 FROM Historial h
@@ -73,6 +73,7 @@ const obtener_Personal = async (req, res) => {
             nivel: Personal.nivel,
             tabulador: Personal.tabulador,
             sindicalizado: Personal.sindicalizado,
+            conversion: Personal.conversion,
             total_historial: Personal.total_historial,
             status: Personal.status
         }));
