@@ -9,6 +9,7 @@ const getAllVacantes = async (req, res) => {
                 pl.nombre AS nombre,
                 pl.puesto,
                 pl.tabulador,
+                pl.conversion,
                 u.nombre AS unidad,
                 u.zona,
                 pl.status
@@ -37,6 +38,7 @@ const getVacanteById = async (req, res) => {
                 pl.nombre AS nombre,
                 pl.puesto,
                 pl.tabulador,
+                pl.conversion,
                 u.nombre AS unidad,
                 u.zona,
                 pl.status
