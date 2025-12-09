@@ -239,7 +239,7 @@ const modificar_Personal = async (req, res) => {
     try {
         const [validacion_historial1] = await con.query("SELECT id_Historial as res FROM Historial ORDER BY id_Historial DESC LIMIT 1");
 
-        const validacion1 = validacion_historial1[0].res;
+        const validacion1 = validacion_historial1.length > 0 ? validacion_historial1[0].res : null;
 
         await con.query(
             "UPDATE Personal SET codigo = ?, nombre = ?, sindicalizado = ?, id_Plaza = ?, status = ? WHERE id_Personal = ?",
@@ -248,9 +248,9 @@ const modificar_Personal = async (req, res) => {
 
         const [validacion_historial2] = await con.query("SELECT id_Historial as res FROM Historial ORDER BY id_Historial DESC LIMIT 1");
 
-        const validacion2 = validacion_historial2[0].res;
+        const validacion2 = validacion_historial2.length > 0 ? validacion_historial2[0].res : null;
 
-        if(validacion1 !== validacion2){
+        if(validacion1 !== validacion2 && validacion2 !== null){
             if(status === false){
                 //desasignar plaza
                 await con.query("UPDATE Personal SET id_Plaza = NULL WHERE id_Personal = ?", [id_Personal]);
@@ -260,16 +260,16 @@ const modificar_Personal = async (req, res) => {
                     "UPDATE Historial SET autorizo = ?, salida = ? WHERE id_Historial = ?",
                     [autorizo, salida, validacion2]
                 );
-                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, autorizo, status, salida});
+                return res.status(200).json({ok: true, msg: 'Personal actualizado correctamente', data: {codigo, nombre, sindicalizado, id_Plaza, autorizo, status, salida}});
             }else{
                 await con.query(
                     "UPDATE Historial SET autorizo = ? WHERE id_Historial = ?",
                     [autorizo, validacion2]
                 );
-                return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, autorizo, status});
+                return res.status(200).json({ok: true, msg: 'Personal actualizado correctamente', data: {codigo, nombre, sindicalizado, id_Plaza, autorizo, status}});
             }
         } else {
-            return res.status(200).json({codigo, nombre, sindicalizado, id_Plaza, status});
+            return res.status(200).json({ok: true, msg: 'Personal actualizado correctamente', data: {codigo, nombre, sindicalizado, id_Plaza, status}});
         }
     } catch (err) {
         console.log(err);
